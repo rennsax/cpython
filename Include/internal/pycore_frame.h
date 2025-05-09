@@ -58,6 +58,12 @@ enum _frameowner {
     FRAME_OWNED_BY_CSTACK = 3,
 };
 
+enum _code_state {
+    PYTHON_CODE = 0,
+    JIT_CODE = 1,
+    CC_CODE = 2,
+};
+
 typedef struct _PyInterpreterFrame {
     PyObject *f_executable; /* Strong reference (code object or None) */
     struct _PyInterpreterFrame *previous;
@@ -70,6 +76,7 @@ typedef struct _PyInterpreterFrame {
     int stacktop;  /* Offset of TOS from localsplus  */
     uint16_t return_offset;  /* Only relevant during a function call */
     char owner;
+    char f_code_state;
     /* Locals and stack */
     PyObject *localsplus[1];
 } _PyInterpreterFrame;
@@ -145,6 +152,7 @@ _PyFrame_Initialize(
     frame->instr_ptr = _PyCode_CODE(code);
     frame->return_offset = 0;
     frame->owner = FRAME_OWNED_BY_THREAD;
+    frame->f_code_state = PYTHON_CODE;
 
     for (int i = null_locals_from; i < code->co_nlocalsplus; i++) {
         frame->localsplus[i] = NULL;

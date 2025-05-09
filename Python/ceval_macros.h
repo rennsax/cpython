@@ -410,9 +410,12 @@ stack_pointer = _PyFrame_GetStackPointer(frame);
 do {                                                   \
     OPT_STAT_INC(traces_executed);                     \
     jit_func jitted = (EXECUTOR)->jit_code;            \
+    frame->f_code_state = JIT_CODE;                    \
     next_instr = jitted(frame, stack_pointer, tstate); \
     Py_DECREF(tstate->previous_executor);              \
     tstate->previous_executor = NULL;                  \
+    CHECK_EVAL_BREAKER();                              \
+    frame->f_code_state = PYTHON_CODE;                 \
     frame = tstate->current_frame;                     \
     if (next_instr == NULL) {                          \
         goto resume_with_error;                        \

@@ -931,6 +931,12 @@ frame_getlasti(PyFrameObject *f, void *closure)
 }
 
 static PyObject *
+frame_getcodestate(PyFrameObject *f, void *closure)
+{
+    return PyLong_FromLong(f->f_frame->f_code_state);
+}
+
+static PyObject *
 frame_getglobals(PyFrameObject *f, void *closure)
 {
     PyObject *globals = f->f_frame->f_globals;
@@ -1701,6 +1707,7 @@ static PyGetSetDef frame_getsetlist[] = {
     {"f_builtins",      (getter)frame_getbuiltins, NULL, NULL},
     {"f_code",          (getter)frame_getcode, NULL, NULL},
     {"f_trace_opcodes", (getter)frame_gettrace_opcodes, (setter)frame_settrace_opcodes, NULL},
+    {"f_code_state",    (getter)frame_getcodestate, NULL, NULL},
     {0}
 };
 
